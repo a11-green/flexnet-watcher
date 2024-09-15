@@ -16,6 +16,8 @@ Users of feature1:  (Total of 10 licenses issued;  5 licenses in use)
     user1 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:00
     user2 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:05
     user3 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:10
+    user4 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:10
+
 
 Users of feature2:  (Total of 20 licenses issued;  15 licenses in use)
   "feature2" v2.0, vendor: vendor
@@ -23,5 +25,4 @@ Users of feature2:  (Total of 20 licenses issued;  15 licenses in use)
 
     user4 server1 server1 (v2.0) (server1/27000 200), start Tue 6/17 14:15
     user5 server1 server1 (v2.0) (server1/27000 200), start Tue 6/17 14:20
-    user6 server1 server1 (v2.0) (server1/27000 200), start Tue 6/17 14:25
-    user7 server1 server1 (v2.0) (server1/27000 200), start Tue 6/17 14:30
+    

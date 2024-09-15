@@ -11,7 +11,10 @@
 </head>
 <body>
     <h1>License Usage</h1>
-    <canvas id="licenseChart" width="400" height="200"></canvas>
+    <h2>Feature 1</h2>
+    <canvas id="licenseChart1" width="200" height="100"></canvas>
+    <h2>Feature 2</h2>
+    <canvas id="licenseChart2" width="200" height="100"></canvas>
     <script>
         // Fetch historical data
         fetch('fetch_data.php')
@@ -20,22 +23,28 @@
             .then(data => {
                 
                 const timeData = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
-                const valueData = data.map(entry => parseInt(entry.output.split('\n').length, 10)); // Adjust based on your output
+                // const valueData = data.map(entry => parseInt(entry.output.split('\n').length, 10)); // Adjust based on your output
+                const valueData1 = data.map(entry => entry.feature1); 
+                const valueData2 = data.map(entry => entry.feature2); 
                 console.log(timeData);
-                console.log(valueData);
+                console.log(valueData1);
+                console.log(valueData2);
 
-                var dataPoints = timeData.map(function(time, index) {
-                    return { x: time, y: valueData[index] };
+                var dataPoints1 = timeData.map(function(time, index) {
+                    return { x: time, y: valueData1[index] };
+                });
+                var dataPoints2 = timeData.map(function(time, index) {
+                    return { x: time, y: valueData2[index] };
                 });
                 
-                const ctx = document.getElementById('licenseChart').getContext('2d');
-                new Chart(ctx, {
+                const ctx1 = document.getElementById('licenseChart1').getContext('2d');
+                new Chart(ctx1, {
                     type: 'line',
                     data: {
                         // labels: labels,
                         datasets: [{
                             label: 'License Usage Over Time',
-                            data: dataPoints,
+                            data: dataPoints1,
                             borderColor: 'rgba(75, 192, 192, 1)',
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             fill: true
@@ -52,6 +61,47 @@
                                     displayFormats: {
                                         second: 'HH:mm:ss'  // HH:mm:ss形式でX軸に表示
                                     }
+                                }
+                            },
+                            y: {
+                                suggestedMin: 0,
+                                ticks: {
+                                    stepSize: 1,
+                                }
+                            }
+                        }
+                    }
+                });
+                const ctx2 = document.getElementById('licenseChart2').getContext('2d');
+                new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        // labels: labels,
+                        datasets: [{
+                            label: 'License Usage Over Time',
+                            data: dataPoints2,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'HH:mm:ss',  // 時間の形式を指定
+                                    unit: 'second',      // 秒単位で表示
+                                    displayFormats: {
+                                        second: 'HH:mm:ss'  // HH:mm:ss形式でX軸に表示
+                                    }
+                                }
+                            },
+                            y: {
+                                suggestedMin: 0,
+                                ticks: {
+                                    stepSize: 1,
                                 }
                             }
                         }

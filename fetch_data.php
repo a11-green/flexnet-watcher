@@ -16,12 +16,12 @@ if ($conn->connect_error) {
 
 
 // Query to fetch historical data
-$sql = "SELECT timestamp, output FROM license_usage ORDER BY timestamp DESC LIMIT 100";
+$sql = "SELECT timestamp, feature1, feature2  FROM license_usage ORDER BY timestamp DESC LIMIT 100";
 $result = $conn->query($sql);
 
 $data = [];
 if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result-> fetch_assoc()) {
         $data[] = $row;
     }
 }

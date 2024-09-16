@@ -24,8 +24,8 @@
                 const feature1Data = data.feature1;
                 console.log(feature1Data);
                 const feature2Data = data.feature2;
-                const timeData1 = feature1Data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
-                const timeData2 = feature2Data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
+                const timeData1 = feature1Data.map(entry => new Date(entry.timestamp).toLocaleString());
+                const timeData2 = feature2Data.map(entry => new Date(entry.timestamp).toLocaleString());
                 // const valueData = data.map(entry => parseInt(entry.output.split('\n').length, 10)); // Adjust based on your output
                 const valueData1 = feature1Data.map(entry => entry.usage_count); 
                 const valueData2 = feature2Data.map(entry => entry.usage_count); 
@@ -60,11 +60,11 @@
                             x: {
                                 type: 'time',
                                 time: {
-                                    parser: 'HH:mm:ss',  // 時間の形式を指定
-                                    unit: 'second',      // 秒単位で表示
-                                    displayFormats: {
-                                        second: 'HH:mm:ss'  // HH:mm:ss形式でX軸に表示
-                                    }
+                                    // parser: 'HH:mm:ss',  // 時間の形式を指定
+                                    unit: 'minute',      // 秒単位で表示
+                                    // displayFormats: {
+                                    //     second: 'HH:mm:ss'  // HH:mm:ss形式でX軸に表示
+                                    // }
                                 }
                             },
                             y: {
@@ -95,11 +95,11 @@
                             x: {
                                 type: 'time',
                                 time: {
-                                    parser: 'HH:mm:ss',  // 時間の形式を指定
+                                    // parser: 'HH:mm:ss',  // 時間の形式を指定
                                     unit: 'second',      // 秒単位で表示
-                                    displayFormats: {
-                                        second: 'HH:mm:ss'  // HH:mm:ss形式でX軸に表示
-                                    }
+                                    // displayFormats: {
+                                    //     second: 'HH:mm:ss'  // HH:mm:ss形式でX軸に表示
+                                    // }
                                 }
                             },
                             y: {

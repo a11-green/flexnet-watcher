@@ -12,6 +12,9 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// トランザクションを開始
+$conn->begin_transaction();
+
 // Execute lmstat command and capture output
 // $output = shell_exec('lmstat -a');
 // $output = shell_exec('cat lmstat_o.txt');
@@ -33,19 +36,57 @@ foreach ($output as $line) {
 
 print_r($licenses);
 
-// Prepare and bind
-$stmt = $conn->prepare("INSERT INTO license_usage (feature1, feature2) VALUES (?, ?)");
-$stmt->bind_param("ii", $licenses["feature1"], $licenses["feature2"]);
-$stmt->execute();
+try{
+    foreach($licenses as $key => $data){
+        // 前回の観測データを取得
+        $sql = "SELECT usage_count FROM license_usage WHERE feature = ? ORDER BY timestamp DESC LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $key);
+        $stmt->execute();
+        $stmt->bind_result($prev_usage_count);
+        $stmt->fetch();
+        $stmt->close();
+        // 今回のデータが前回のものと違った場合のみデータベースに挿入
+        if ($data != $prev_usage_count){
+            $stmt = $conn->prepare("INSERT INTO license_usage (feature, usage_count) VALUES (?, ?)");
+            $stmt->bind_param("si", $key, $data);
+            $stmt->execute();
+            // Close connection
+            $stmt->close();
+            
+            echo "Data stored successfully\n";
+        }
+        else {
+            // 最新のレコードの ID を取得
+            $sql = "SET @latest_id = (SELECT id FROM license_usage WHERE feature = ? ORDER BY timestamp DESC LIMIT 1)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $key);
+            $stmt->execute();
+            $stmt->close();
 
+            // 最新のレコードの timestamp を現在の時刻に更新
+            $sql = "UPDATE license_usage SET timestamp = NOW() WHERE id = @latest_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $stmt->close();
 
+            // コミット
+            $conn->commit();
+            
+            echo "Data is same as latest; update only timestamp. \n";
+        }
+    }
+} catch (Exception $e) {
+    // エラー発生時にロールバック
+    $conn->rollback();
+    echo "Error: " . $e->getMessage();
+}
 
-
-
-echo "Data stored successfully";
-
-// Close connection
-$stmt->close();
 $conn->close();
+
+
+
+
+
 ?>
 

@@ -21,19 +21,23 @@
         // fetch('lmstat.php')
             .then(response => response.json())
             .then(data => {
-                
-                const timeData = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
+                const feature1Data = data.feature1;
+                console.log(feature1Data);
+                const feature2Data = data.feature2;
+                const timeData1 = feature1Data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
+                const timeData2 = feature2Data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
                 // const valueData = data.map(entry => parseInt(entry.output.split('\n').length, 10)); // Adjust based on your output
-                const valueData1 = data.map(entry => entry.feature1); 
-                const valueData2 = data.map(entry => entry.feature2); 
-                console.log(timeData);
+                const valueData1 = feature1Data.map(entry => entry.usage_count); 
+                const valueData2 = feature2Data.map(entry => entry.usage_count); 
+                console.log(timeData1);
+                console.log(timeData2);
                 console.log(valueData1);
                 console.log(valueData2);
 
-                var dataPoints1 = timeData.map(function(time, index) {
+                var dataPoints1 = timeData1.map(function(time, index) {
                     return { x: time, y: valueData1[index] };
                 });
-                var dataPoints2 = timeData.map(function(time, index) {
+                var dataPoints2 = timeData2.map(function(time, index) {
                     return { x: time, y: valueData2[index] };
                 });
                 

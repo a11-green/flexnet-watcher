@@ -19,6 +19,7 @@ Users of feature1:  (Total of 10 licenses issued;  5 licenses in use)
     user4 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:10
 
 
+
 Users of feature2:  (Total of 20 licenses issued;  15 licenses in use)
   "feature2" v2.0, vendor: vendor
   floating license

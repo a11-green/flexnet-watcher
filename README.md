@@ -32,14 +32,13 @@ http://localhost/info.php
 
 # データベース
 ## MySQLでデータベースを準備する
-ライセンスのFeatureの分だけ次のようなテーブルを作成します。
 
-license_usage
 
-|カラム名| id | timestamp | count |
-|---| --- | --- | --- |
-|型| INT | DATETIME | INT |
-|説明| 主キー | 時刻 | ライセンス使用本数 |
+
+|カラム名| id | timestamp | license_server | feature | usage_count |
+|---| --- | --- | --- | --- | --- |
+|型| INT | DATETIME | TEXT | TEXT | INT |
+|説明| 主キー | 時刻 | ライセンスサーバホスト名 | フィーチャー名 | ライセンス使用本数 |
 
 
 
@@ -49,16 +48,18 @@ sudo mysql
 ```
 
 ```
-create database lmstat_watcher;
-use lmstat_watcher;
-CREATE TABLE license_usage (
-    ->     id INT AUTO_INCREMENT PRIMARY KEY,
-    ->     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    ->     count INT
-    -> );
-show tables;
-CREATE USER 'lmstat-watcher'@'localhost' IDENTIFIED BY '1111';
-grant all privileges on lmstat_watcher.* to 'lmstat-watcher'@'localhost';
+mysql> create database flexnet_watcher;
+mysql> use flexnet_watcher;
+mysql> create table license_usage (
+    -> id int auto_increment primary key,
+    -> timestamp datetime default current_timestamp,
+    -> license_server text,
+    -> feature text,
+    -> usage_count int);
+mysql> show tables;
+mysql> create user 'flexnet_watcher'@'localhost' identified by '1111';
+mysql> grant all privileges on flexnet_watcher.* to 'flexnet_watcher'@'localhost';
+mysql> quit;
 ```
 ## MySQLiを有効化する
 `php -m | grep mysqli`を実行し、何も表示されなければmysqliをインストール、有効化する必要があります。

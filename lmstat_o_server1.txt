@@ -9,14 +9,14 @@ Vendor daemon status (on server1):
 
 Feature usage info:
 
-Users of feature1:  (Total of 10 licenses issued;  5 licenses in use)
+Users of feature1:  (Total of 10 licenses issued;  2 licenses in use)
   "feature1" v1.0, vendor: vendor
   floating license
 
     user1 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:00
     user2 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:05
     user3 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:10
-    user4 server1 server1 (v1.0) (server1/27000 100), start Tue 6/17 14:10
+    
 
 
 

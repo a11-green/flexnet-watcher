@@ -34,11 +34,21 @@ function get_license_info($lmstat_output) {
         if (strpos($line, "Users of") !== false) {
             // ライセンス名を取得
             $feature_name = str_replace(":", "", trim(explode(" ",  $line)[2]));
-            $licenses[$feature_name] = 0;
-        } elseif (strpos($line, "start") !== false) {
-            // ライセンス数をカウント
-            $licenses[$feature_name]++;
-        }
+            // Total と Used のライセンス数を抽出
+            if (preg_match('/Total of (\d+) licenses issued; *(\d+) licenses in use/', $line, $matches)) {
+                $total_licenses = (int)$matches[1];
+                $used_licenses = (int)$matches[2];
+            } else {
+                $total_licenses = 0;
+                $used_licenses = 0;
+            }
+
+            $licenses[$feature_name] = [
+                'total' => $total_licenses,
+                'used' => $used_licenses
+            ];
+        } 
+        
     }
     return [
         "hostname" => $hostname, 
@@ -52,12 +62,18 @@ $license_info2 = get_license_info($output2);
 print_r($license_info1);
 print_r($license_info2);
 
+// 抽出したライセンス情報をデータベースに記録する
 function store_license_info($conn, $license_info) {
     try {
-        foreach($license_info["licenses"] as $feature => $usage_count){
-            $stmt = $conn->prepare("INSERT INTO license_usage (license_server, feature, usage_count) VALUES (?, ?, ?)");
-            $stmt->bind_param("ssi", $license_info["hostname"], $feature, $usage_count);
-            print_r($stmt);
+        foreach($license_info["licenses"] as $feature => $licenses){
+            $stmt = $conn->prepare("INSERT INTO license_usage (license_server, feature, total_licenses, used_licenses) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param(
+                "ssii", 
+                $license_info["hostname"], 
+                $feature, 
+                $licenses["total"],
+                $licenses["used"]
+            );
             $stmt->execute();
             $stmt->close();
             echo "Data stored successfully\n";

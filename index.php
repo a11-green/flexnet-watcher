@@ -20,32 +20,68 @@
     fetch('fetch_data.php')
         .then(response => response.json())
         .then(data => {
-            const features = [
-                { name: 'feature1', elementId: 'licenseChart1' },
-                { name: 'feature2', elementId: 'licenseChart2' }
+            // const features = [
+            //     { name: 'feature1', elementId: 'licenseChart1' },
+            //     { name: 'feature2', elementId: 'licenseChart2' }
+            // ];
+            const licenseServers = [
+                { name: 'server1', elementId: 'licenseChart1' },
+                { name: 'server2', elementId: 'licenseChart2' }
             ];
 
-            features.forEach(feature => {
-                const featureData = data[feature.name];
-                const timeData = featureData.map(entry => new Date(entry.timestamp).toLocaleString());
-                const valueData = featureData.map(entry => entry.used_licenses);
+            licenseServers.forEach(server => {
+                const serverData = data[server.name];
+                // const featureData = data[feature.name];
+                // const featureData = serverData["feature1"];
+                // data[server.name]のkeyからfeature名を動的に取得
+                const features = Object.keys(data[server.name]);
 
-                const dataPoints = timeData.map((time, index) => ({
-                    x: time,
-                    y: valueData[index]
-                }));
+                // datasetsを生成
+                const datasets = Object.keys(data[server.name]).flatMap((feature, index) => {
+                    const featureData = data[server.name][feature];
+                    const timeData = featureData.map(entry => new Date(entry.timestamp).toLocaleString());
+                    const usedData = featureData.map(entry => entry.used_licenses);
+                    const totalData = featureData.map(entry => entry.total_licenses);
 
-                const ctx = document.getElementById(feature.elementId).getContext('2d');
+                    // total_licensesのデータセット（実線）
+                    const totalDataset = {
+                        label: `${feature} Total Licenses`,
+                        data: timeData.map((time, i) => ({
+                            x: time,
+                            y: totalData[i],
+                        })),
+                        borderColor: `hsla(${index * 60}, 70%, 50%, 1)`, // 実線の色
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.0, // 折れ線を少し滑らかに
+                        fill: false, // 塗りつぶしなし
+                    };
+
+                    // used_licensesのデータセット（点線）
+                    const usedDataset = {
+                        label: `${feature} Used Licenses`,
+                        data: timeData.map((time, i) => ({
+                            x: time,
+                            y: usedData[i],
+                        })),
+                        borderColor: `hsla(${index * 60}, 70%, 50%, 0.7)`, // 点線の色（少し透明に）
+                        // backgroundColor: 'transparent',
+                        backgroundColor: `hsla(${index * 60}, 70%, 50%, 0.2)`,
+                        borderWidth: 2,
+                        borderDash: [5, 5], // 点線のスタイル
+                        tension: 0.0, // 折れ線を少し滑らかに
+                        fill: true, // 塗りつぶしなし
+                    };
+
+                    return [totalDataset, usedDataset];
+                });
+
+                // グラフを描画
+                const ctx = document.getElementById(server.elementId).getContext('2d');
                 new Chart(ctx, {
-                    type: 'line',
+                    type: 'line', // 折れ線グラフ
                     data: {
-                        datasets: [{
-                            label: `${feature.name} Usage Over Time`,
-                            data: dataPoints,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            fill: true
-                        }]
+                        datasets: datasets, // 動的に生成したdatasetsを使用
                     },
                     options: {
                         responsive: true,
@@ -54,17 +90,32 @@
                                 type: 'time',
                                 time: {
                                     unit: 'minute', // X軸を時間単位に設定
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Time',
                                 }
                             },
                             y: {
-                                suggestedMin: 0,
-                                ticks: {
-                                    stepSize: 1,
-                                }
+                                beginAtZero: true, // Y軸の開始を0に設定
+                                title: {
+                                    display: true,
+                                    text: 'Licenses',
+                                },
                             }
-                        }
+                        },
+                        plugins: {
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false, // 同じ時刻のデータをまとめて表示
+                            },
+                            legend: {
+                                position: 'top', // 凡例を上部に配置
+                            },
+                        },
                     }
                 });
+
             });
         })
         .catch(error => console.error('Error fetching data:', error));
